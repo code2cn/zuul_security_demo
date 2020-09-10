@@ -1,0 +1,43 @@
+# bootstrap.yml
+# consul 使用动态配置，必须在bootstrap.yml中配置好动态配置项目的配置
+server:
+  port: 5555
+spring:
+  application:
+    name: zuul-service
+  cloud:
+    consul:
+      host: 192.168.137.131
+      port: 8500
+      token: 01557ee3-d2e9-8792-7544-1027f197c156
+      # 服务发现配置
+      discovery:
+        # 启用服务发现
+        enabled: true
+        # 启用服务注册
+        register: true
+        # 服务停止时取消注册
+        deregister: true
+        # 表示注册时使用IP而不是hostname
+        prefer-ip-address: true
+        # 执行监控检查的频率
+        health-check-interval: 30s
+        # 设置健康检查失败多长时间后，取消注册
+        health-check-critical-timeout: 30s
+        # 健康检查的路径
+        health-check-path: /actuator/health
+        # 服务注册标识，格式为：应用名称+服务器IP+端口
+        instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}
+      #enabled将此值设置为“false”禁用Consul配置
+      config:
+        enabled: true   #默认是true --
+        prefix: config #表示consul用于存储配置的文件夹根目录名为config
+        profileSeparator: ',' #表示如果有多个profile(eg: 开发环境dev，测试环境test...) ，则key名中的profile与defaultContext之间，用什么分隔符来表示（例如config/springtest-service,dev/data）
+        defaultContext: gateWay-service #表示配置文件对应的默认应用名称（优先获取当前服务名称配置，没有的到gateWay-service里找）
+        format: YAML    # 表示consul上面文件的格式 有四种 YAML PROPERTIES KEY-VALUE FILES
+        data-key: data    #表示consul上面的KEY值(或者说文件的名字) 默认是data
+        # watch选项为配置监视功能，主要监视配置的改变
+        watch:
+          enabled: true
+          delay: 10000
+          wait-time: 30

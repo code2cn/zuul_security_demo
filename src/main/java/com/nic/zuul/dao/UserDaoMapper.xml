@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nic.zuul.dao.UserDao">
+    <select id="findUserByName" resultMap="UserResultMap">
+        SELECT a.*,b.role,c.role_zh
+        from
+        (
+        SELECT * from users where username=#{0}
+        )a
+        left join user_role b
+        on  a.username=b.username
+        left join role c
+        on b.role=c.role
+    </select>
+    <select id="selectSome" resultType="java.lang.Integer">
+        select count(*) from users
+    </select>
+    <resultMap type="User" id="UserResultMap">
+        <id property="username" column="username" />
+        <result property="password" column="password" />
+        <result property="usernameZh" column="username_zh" />
+        <result property="enabled" column="enabled" />
+        <result property="credentialsNonExpired" column="credentials_non_expired" />
+        <result property="accountNonLocked" column="account_non_locked" />
+        <result property="accountNonExpired" column="account_non_expired" />
+        <collection property="roles" ofType="Role">
+            <id property="role"  column="role" />
+            <result property="roleZh"  column="role_zh" />
+        </collection>
+    </resultMap>
+</mapper>
